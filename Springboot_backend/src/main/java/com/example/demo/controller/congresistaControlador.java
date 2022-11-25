@@ -44,13 +44,13 @@ public class congresistaControlador {
 
 	@PostMapping
 	public ResponseEntity<congresista> GuardaCongresista(@Validated @RequestBody congresista congresista) {
-		
-		Optional<proyecto>proyectoOptional=proyectoRepositorio.findById(congresista.getProyectos().getId());
+
+		Optional<proyecto> proyectoOptional = proyectoRepositorio.findById(congresista.getProyectos().getId());
 		Optional<usuario> usuarioOptional = usuarioRepositorio.findById(congresista.getUsuarios().getId());
 		if (!usuarioOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}
-		if(!proyectoOptional.isPresent()) {
+		if (!proyectoOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}
 		congresista.setUsuarios(usuarioOptional.get());
@@ -59,20 +59,20 @@ public class congresistaControlador {
 		URI ubicacion = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(congresistaGuardado.getCongresista_id()).toUri();
 		return ResponseEntity.created(ubicacion).body(congresistaGuardado);
-				
+
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<congresista> actualizarCongresista(@PathVariable Long id,
 			@Validated @RequestBody congresista congresista) {
-		
-		Optional<proyecto>proyectoOptional=proyectoRepositorio.findById(congresista.getProyectos().getId());
+
+		Optional<proyecto> proyectoOptional = proyectoRepositorio.findById(congresista.getProyectos().getId());
 		Optional<usuario> usuarioOptional = usuarioRepositorio.findById(congresista.getUsuarios().getId());
-		
-		if(!proyectoOptional.isPresent()) {
+
+		if (!proyectoOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}
-		
+
 		if (!usuarioOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}

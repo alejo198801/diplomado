@@ -1,4 +1,4 @@
-package seguridad;
+package com.example.demo.segurity;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,44 +15,34 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class WebSecurityConfig {
-	
+
 	@Bean
-	SecurityFilterChain filterchain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
-		return http
-				.csrf().disable()
-				.authorizeRequests()
-				.anyRequest()
-				.authenticated()
-				.and()
-				.httpBasic()
-				.and()
-				.sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and()
-				.build();	
-		
+	SecurityFilterChain filterChain(HttpSecurity htpp, AuthenticationManager authManager) throws Exception {
+		return htpp.csrf().disable().authorizeRequests().anyRequest().authenticated().and().httpBasic().and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().build();
+
 	}
-	
+
 	@Bean
 	UserDetailsService userDetailsService() {
-		
+
 		InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-		manager.createUser(User.withUsername("admin")
-				.password(passwordEncoder().encode("admin")).roles().build());
+		manager.createUser(User.withUsername("admin").password(passwordEncoder().encode("admin")).roles().build());
 		return manager;
 	}
-	
+
 	@Bean
-	AuthenticationManager authManager(HttpSecurity http) throws Exception {
-		
-		return http.getSharedObject(AuthenticationManagerBuilder.class)
-				.userDetailsService(userDetailsService())
-				.passwordEncoder(passwordEncoder())
-				.and().build();
+	AuthenticationManager authManager(HttpSecurity htpp) throws Exception {
+		return htpp.getSharedObject(AuthenticationManagerBuilder.class).userDetailsService(userDetailsService())
+				.passwordEncoder(passwordEncoder()).and().build();
+
 	}
-	
+
 	@Bean
 	PasswordEncoder passwordEncoder() {
+
 		return new BCryptPasswordEncoder();
+
 	}
+
 }
