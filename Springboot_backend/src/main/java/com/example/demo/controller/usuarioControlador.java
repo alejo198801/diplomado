@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.example.demo.model.usuario;
+import com.example.demo.model.Usuario;
 import com.example.demo.repository.UsuarioRepository;
 
 @RestController
@@ -30,22 +29,22 @@ public class usuarioControlador {
 	private UsuarioRepository usuarioRepositorio;
 
 	@GetMapping
-	public ResponseEntity<Page<usuario>> listarUsuarios(Pageable pageable) {
+	public ResponseEntity<Page<Usuario>> listarUsuarios(Pageable pageable) {
 
 		return ResponseEntity.ok(usuarioRepositorio.findAll(pageable));
 	}
 
 	@PostMapping
-	public ResponseEntity<usuario> guardarUsuario(@Validated @RequestBody usuario usuario) {
-		usuario usuarioguardado = usuarioRepositorio.save(usuario);
+	public ResponseEntity<Usuario> guardarUsuario(@Validated @RequestBody Usuario usuario) {
+		Usuario usuarioguardado = usuarioRepositorio.save(usuario);
 		URI ubicacion = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(usuarioguardado.getId()).toUri();
 		return ResponseEntity.created(ubicacion).body(usuarioguardado);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<usuario> actualizarUsuario(@PathVariable Long id, @Validated @RequestBody usuario usuario) {
-		Optional<usuario> usuarioOptional = usuarioRepositorio.findById(id);
+	public ResponseEntity<Usuario> actualizarUsuario(@PathVariable int id, @Validated @RequestBody Usuario usuario) {
+		Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(id);
 		if (!usuarioOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}
@@ -56,8 +55,8 @@ public class usuarioControlador {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<usuario> eliminarUsuario(@PathVariable Long id) {
-		Optional<usuario> usuarioOptional = usuarioRepositorio.findById(id);
+	public ResponseEntity<Usuario> eliminarUsuario(@PathVariable int id) {
+		Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(id);
 		if (!usuarioOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}
@@ -66,8 +65,8 @@ public class usuarioControlador {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<usuario> obtenerUsuarioporId(@PathVariable Long id) {
-		Optional<usuario> usuarioOptional = usuarioRepositorio.findById(id);
+	public ResponseEntity<Usuario> obtenerUsuarioporId(@PathVariable int id) {
+		Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(id);
 		if (!usuarioOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}

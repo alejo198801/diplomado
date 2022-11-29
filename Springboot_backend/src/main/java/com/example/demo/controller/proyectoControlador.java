@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.example.demo.model.proyecto;
+import com.example.demo.model.Proyecto;
 import com.example.demo.repository.proyectoRepository;
 
 @RestController
@@ -29,15 +29,15 @@ public class proyectoControlador {
 	private proyectoRepository proyectoRepositorio;
 
 	@GetMapping
-	public ResponseEntity<Page<proyecto>> listarProyectos(Pageable pageable) {
+	public ResponseEntity<Page<Proyecto>> listarProyectos(Pageable pageable) {
 
 		return ResponseEntity.ok(proyectoRepositorio.findAll(pageable));
 	}
 
 	@PostMapping
-	public ResponseEntity<proyecto> guardarProyecto(@Validated @RequestBody proyecto proyecto) {
+	public ResponseEntity<Proyecto> guardarProyecto(@Validated @RequestBody Proyecto proyecto) {
 
-		proyecto proyectoguardado = proyectoRepositorio.save(proyecto);
+		Proyecto proyectoguardado = proyectoRepositorio.save(proyecto);
 		URI ubicacion = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(proyectoguardado.getId()).toUri();
 		return ResponseEntity.created(ubicacion).body(proyectoguardado);
@@ -45,9 +45,9 @@ public class proyectoControlador {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<proyecto> actualizarProyecto(@PathVariable Long id,
-			@Validated @RequestBody proyecto proyecto) {
-		Optional<proyecto> proyectoOptional = proyectoRepositorio.findById(id);
+	public ResponseEntity<Proyecto> actualizarProyecto(@PathVariable Long id,
+			@Validated @RequestBody Proyecto proyecto) {
+		Optional<Proyecto> proyectoOptional = proyectoRepositorio.findById(id);
 		if (!proyectoOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}
@@ -57,8 +57,8 @@ public class proyectoControlador {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<proyecto> eliminarProyecto(@PathVariable Long id) {
-		Optional<proyecto> proyectoOptional = proyectoRepositorio.findById(id);
+	public ResponseEntity<Proyecto> eliminarProyecto(@PathVariable Long id) {
+		Optional<Proyecto> proyectoOptional = proyectoRepositorio.findById(id);
 		if (!proyectoOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}
@@ -68,8 +68,8 @@ public class proyectoControlador {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<proyecto> obtenerProyectoPorid(@PathVariable Long id) {
-		Optional<proyecto> proyectoOptional = proyectoRepositorio.findById(id);
+	public ResponseEntity<Proyecto> obtenerProyectoPorid(@PathVariable Long id) {
+		Optional<Proyecto> proyectoOptional = proyectoRepositorio.findById(id);
 		if (!proyectoOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}

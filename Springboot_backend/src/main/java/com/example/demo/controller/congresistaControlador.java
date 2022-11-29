@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.example.demo.model.congresista;
-import com.example.demo.model.proyecto;
-import com.example.demo.model.usuario;
+import com.example.demo.model.Congresista;
+import com.example.demo.model.Proyecto;
+import com.example.demo.model.Usuario;
 import com.example.demo.repository.CongresistaRepository;
 import com.example.demo.repository.UsuarioRepository;
 import com.example.demo.repository.proyectoRepository;
@@ -37,16 +37,16 @@ public class congresistaControlador {
 	private UsuarioRepository usuarioRepositorio;
 
 	@GetMapping
-	public ResponseEntity<Page<congresista>> ListarCongresistas(Pageable pageable) {
+	public ResponseEntity<Page<Congresista>> ListarCongresistas(Pageable pageable) {
 
 		return ResponseEntity.ok(congresistaRepositorio.findAll(pageable));
 	}
 
 	@PostMapping
-	public ResponseEntity<congresista> GuardaCongresista(@Validated @RequestBody congresista congresista) {
+	public ResponseEntity<Congresista> GuardaCongresista(@Validated @RequestBody Congresista congresista) {
 
-		Optional<proyecto> proyectoOptional = proyectoRepositorio.findById(congresista.getProyectos().getId());
-		Optional<usuario> usuarioOptional = usuarioRepositorio.findById(congresista.getUsuarios().getId());
+		Optional<Proyecto> proyectoOptional = proyectoRepositorio.findById(congresista.getProyectos().getId());
+		Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(congresista.getUsuarios().getId());
 		if (!usuarioOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}
@@ -55,7 +55,7 @@ public class congresistaControlador {
 		}
 		congresista.setUsuarios(usuarioOptional.get());
 		congresista.setProyectos(proyectoOptional.get());
-		congresista congresistaGuardado = congresistaRepositorio.save(congresista);
+		Congresista congresistaGuardado = congresistaRepositorio.save(congresista);
 		URI ubicacion = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(congresistaGuardado.getCongresista_id()).toUri();
 		return ResponseEntity.created(ubicacion).body(congresistaGuardado);
@@ -63,11 +63,11 @@ public class congresistaControlador {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<congresista> actualizarCongresista(@PathVariable Long id,
-			@Validated @RequestBody congresista congresista) {
+	public ResponseEntity<Congresista> actualizarCongresista(@PathVariable Long id,
+			@Validated @RequestBody Congresista congresista) {
 
-		Optional<proyecto> proyectoOptional = proyectoRepositorio.findById(congresista.getProyectos().getId());
-		Optional<usuario> usuarioOptional = usuarioRepositorio.findById(congresista.getUsuarios().getId());
+		Optional<Proyecto> proyectoOptional = proyectoRepositorio.findById(congresista.getProyectos().getId());
+		Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(congresista.getUsuarios().getId());
 
 		if (!proyectoOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
@@ -76,7 +76,7 @@ public class congresistaControlador {
 		if (!usuarioOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}
-		Optional<congresista> congresistaOptional = congresistaRepositorio.findById(id);
+		Optional<Congresista> congresistaOptional = congresistaRepositorio.findById(id);
 		if (!congresistaOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}
@@ -89,8 +89,8 @@ public class congresistaControlador {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<congresista> eliminarCongresista(@PathVariable Long id) {
-		Optional<congresista> congresistaOptional = congresistaRepositorio.findById(id);
+	public ResponseEntity<Congresista> eliminarCongresista(@PathVariable Long id) {
+		Optional<Congresista> congresistaOptional = congresistaRepositorio.findById(id);
 		if (!congresistaOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}
@@ -100,8 +100,8 @@ public class congresistaControlador {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<congresista> encontrarCongresistaPorId(@PathVariable Long id) {
-		Optional<congresista> congresistaOptional = congresistaRepositorio.findById(id);
+	public ResponseEntity<Congresista> encontrarCongresistaPorId(@PathVariable Long id) {
+		Optional<Congresista> congresistaOptional = congresistaRepositorio.findById(id);
 		if (!congresistaOptional.isPresent()) {
 			return ResponseEntity.unprocessableEntity().build();
 		}

@@ -10,37 +10,63 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import lombok.AllArgsConstructor;
+
 
 @Configuration
+@AllArgsConstructor
 public class WebSecurityConfig {
 
-	@Bean
-	SecurityFilterChain filterChain(HttpSecurity htpp, AuthenticationManager authManager) throws Exception {
-		return htpp.csrf().disable().authorizeRequests().anyRequest().authenticated().and().httpBasic().and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().build();
+	private final UserDetailsService userDetailsService;
+	
+	public WebSecurityConfig(UserDetailsService userDetailsService) {
+		super();
+		this.userDetailsService = userDetailsService;
+		this.jwtAuthorizationFilter = new JWTAuthorizationFilter();
+	}
 
+	public UserDetailsService getUserDetailsService() {
+		return userDetailsService;
+	}
+	
+	private final JWTAuthorizationFilter jwtAuthorizationFilter;	
+
+	public JWTAuthorizationFilter getJwtAuthorizationFilter() {
+		return jwtAuthorizationFilter;
+	}	
+	
+
+	@Bean
+	SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
+		
+		
+		
+		JWTAuthicationFilter jwtAuthicationFilter= new JWTAuthicationFilter();
+		jwtAuthicationFilter.setAuthenticationManager(authManager);
+		jwtAuthicationFilter.setFilterProcessesUrl("/login");
+		
+		
+		
+		
+		return http.csrf().disable().authorizeRequests().anyRequest().authenticated().and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+				.addFilter(jwtAuthicationFilter)
+				.addFilterBefore(jwtAuthorizationFilter,UsernamePasswordAuthenticationFilter.class)
+				
+				.build();
 	}
 
 	@Bean
-	UserDetailsService userDetailsService() {
-
-		InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-		manager.createUser(User.withUsername("admin").password(passwordEncoder().encode("admin")).roles().build());
-		return manager;
-	}
-
-	@Bean
-	AuthenticationManager authManager(HttpSecurity htpp) throws Exception {
-		return htpp.getSharedObject(AuthenticationManagerBuilder.class).userDetailsService(userDetailsService())
-				.passwordEncoder(passwordEncoder()).and().build();
-
+	AuthenticationManager authManager(HttpSecurity http, PasswordEncoder passwordEncoder) throws Exception {
+		return http.getSharedObject(AuthenticationManagerBuilder.class).userDetailsService(userDetailsService)
+				.passwordEncoder(passwordEncoder).and().build();
 	}
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
-
 		return new BCryptPasswordEncoder();
 
 	}
